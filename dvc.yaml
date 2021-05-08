@@ -1,0 +1,39 @@
+stages:
+  prepare:
+    cmd: python src/prepare.py datasets/password-complexity/data.csv datasets/password-complexity/prepared
+    deps:
+    - datasets/password-complexity/data.csv
+    - src/prepare.py
+    params:
+    - prepare.seed
+    - prepare.split
+    outs:
+    - datasets/password-complexity/prepared
+  featurize:
+    cmd: python src/featurize.py datasets/password-complexity/prepared datasets/password-complexity/featurized
+    deps:
+    - datasets/password-complexity/prepared
+    - src/featurize.py
+    outs:
+    - datasets/password-complexity/featurized
+  train:
+    cmd: python src/train.py datasets/password-complexity/featurized ml-models-service/ml_models/password_complexity/xgboost_baseline.pkl
+    deps:
+    - datasets/password-complexity/featurized
+    - src/train.py
+    params:
+    - train.eval_metric
+    - train.n_estimators
+    - train.nthread
+    - train.objective
+    outs:
+    - ml-models-service/ml_models/password_complexity/xgboost_baseline.pkl
+  evaluate:
+    cmd: python src/evaluate.py ml-models-service/ml_models/password_complexity/xgboost_baseline.pkl datasets/password-complexity/featurized metrics.json
+    deps:
+    - datasets/password-complexity/featurized
+    - ml-models-service/ml_models/password_complexity/xgboost_baseline.pkl
+    - src/evaluate.py
+    metrics:
+    - metrics.json:
+        cache: false
