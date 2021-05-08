@@ -1,0 +1,1 @@
+PASSWORD_COMPLEXITY_MODEL_PATH='./ml_models/password_complexity/xgboost_baseline.pkl'
