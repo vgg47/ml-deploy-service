@@ -1,0 +1,80 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/prepare.py datasets/password-complexity/data.csv datasets/password-complexity/prepared
+    deps:
+    - path: datasets/password-complexity/data.csv
+      md5: eb1f5d6aaf81aaa41c7ff965dc694b90
+      size: 47026665
+    - path: src/prepare.py
+      md5: 97978478f38772f2ccb43c35bc357063
+      size: 735
+    params:
+      params.yaml:
+        prepare.seed: 20170428
+        prepare.split: 0.2
+    outs:
+    - path: datasets/password-complexity/prepared
+      md5: d843b9b4f1260ec897041869e73e4ae0.dir
+      size: 79127517
+      nfiles: 2
+  featurize:
+    cmd: python src/featurize.py datasets/password-complexity/prepared datasets/password-complexity/featurized
+    deps:
+    - path: datasets/password-complexity/prepared
+      md5: d843b9b4f1260ec897041869e73e4ae0.dir
+      size: 79127517
+      nfiles: 2
+    - path: src/featurize.py
+      md5: c23a0a98d1de81972fc47b9c4a045df1
+      size: 2534
+    outs:
+    - path: datasets/password-complexity/featurized
+      md5: 61e005645586ef85451df7068249a5d0.dir
+      size: 146679586
+      nfiles: 2
+  train:
+    cmd: python src/train.py datasets/password-complexity/featurized ml-models-service/ml_models/password_complexity/models
+      xgboost_baseline
+    deps:
+    - path: datasets/password-complexity/featurized
+      md5: 61e005645586ef85451df7068249a5d0.dir
+      size: 146679586
+      nfiles: 2
+    - path: src/train.py
+      md5: d188401b02dc0a54866391ca2c085126
+      size: 1255
+    params:
+      params.yaml:
+        train.eval_metric: rmsle
+        train.model_version: 1
+        train.n_estimators: 100
+        train.nthread: -1
+        train.objective: reg:squaredlogerror
+    outs:
+    - path: ml-models-service/ml_models/password_complexity/models
+      md5: c7a90f4549603cc97d4550205865a4ed.dir
+      size: 504781
+      nfiles: 1
+  evaluate:
+    cmd: python src/evaluate.py ml-models-service/ml_models/password_complexity/models
+      xgboost_baseline datasets/password-complexity/featurized metrics
+    deps:
+    - path: datasets/password-complexity/featurized
+      md5: 61e005645586ef85451df7068249a5d0.dir
+      size: 146679586
+      nfiles: 2
+    - path: ml-models-service/ml_models/password_complexity/models
+      md5: c7a90f4549603cc97d4550205865a4ed.dir
+      size: 504781
+      nfiles: 1
+    - path: src/evaluate.py
+      md5: 993e4e500a4fdaf66e2571e58fa7743e
+      size: 1483
+    outs:
+    - path: metrics/loss.json
+      md5: 41192a1b580a405c54a6ba3b7b9030b1
+      size: 97
+    - path: metrics/scores.json
+      md5: 7bbe60ce83e1c4b4468f60065aaae086
+      size: 38
