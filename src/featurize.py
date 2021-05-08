@@ -10,10 +10,8 @@ if len(sys.argv) != 3 and len(sys.argv) != 5:
 
 train_input = os.path.join(sys.argv[1], 'train.csv')
 test_input = os.path.join(sys.argv[1], 'test.csv')
-
 train_output = os.path.join(sys.argv[2], 'train.csv')
 test_output = os.path.join(sys.argv[2], 'test.csv')
-
 os.makedirs(os.path.join(sys.argv[2]), exist_ok=True)
 
 def number_of_characters(pswrd):

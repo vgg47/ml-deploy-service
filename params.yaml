@@ -7,7 +7,3 @@ train:
   nthread: -1
   eval_metric: "rmsle"
   n_estimators: 100
-  model_version: 1
-
-evaluate:
-  model_version: 1

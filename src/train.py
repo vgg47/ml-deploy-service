@@ -6,22 +6,19 @@ import pandas as pd
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
 
-if len(sys.argv) != 4:
+if len(sys.argv) != 3:
     sys.stderr.write('Arguments error. Usage:\n')
-    sys.stderr.write('\tpython train.py featurized-directory model-directory model-name\n')
+    sys.stderr.write('\tpython train.py featurized-directory model-file\n')
     sys.exit(1)
 
 params = yaml.safe_load(open('params.yaml'))['train']
-
 objective = params['objective']
 nthread = params['nthread']
 eval_metric = params['eval_metric']
 n_estimators = params['n_estimators']
-version = params['model_version']
 
 train_input = os.path.join(sys.argv[1], 'train.csv')
-
-model_output = os.path.join(sys.argv[2], f'{sys.argv[3]}_{version}.pkl')
+model_output = sys.argv[2]
 os.makedirs(os.path.dirname(model_output), exist_ok=True)
 
 train = pd.read_csv(train_input, index_col=0)

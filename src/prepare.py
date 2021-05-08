@@ -12,16 +12,13 @@ if len(sys.argv) != 3:
     sys.exit(1)
 
 params = yaml.safe_load(open('params.yaml'))['prepare']
-
 split = params['split']
 random.seed(params['seed'])
 
 data_input = sys.argv[1]
-
 train_output = os.path.join(sys.argv[2], 'train.csv')
 test_output = os.path.join(sys.argv[2], 'test.csv')
-
-os.makedirs(os.path.join(sys.argv[2]), exist_ok=True)
+os.makedirs(sys.argv[2], exist_ok=True)
 
 data = pd.read_csv(data_input)
 data.dropna(inplace=True)

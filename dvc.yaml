@@ -17,28 +17,23 @@ stages:
     outs:
     - datasets/password-complexity/featurized
   train:
-    cmd: python src/train.py datasets/password-complexity/featurized ml-models-service/ml_models/password_complexity/models
-      xgboost_baseline
+    cmd: python src/train.py datasets/password-complexity/featurized ml-models-service/ml_models/password_complexity/xgboost_baseline.pkl
     deps:
     - datasets/password-complexity/featurized
     - src/train.py
     params:
     - train.eval_metric
-    - train.model_version
     - train.n_estimators
     - train.nthread
     - train.objective
     outs:
-    - ml-models-service/ml_models/password_complexity/models
+    - ml-models-service/ml_models/password_complexity/xgboost_baseline.pkl
   evaluate:
-    cmd: python src/evaluate.py ml-models-service/ml_models/password_complexity/models
-      xgboost_baseline datasets/password-complexity/featurized metrics
+    cmd: python src/evaluate.py ml-models-service/ml_models/password_complexity/xgboost_baseline.pkl datasets/password-complexity/featurized metrics.json
     deps:
     - datasets/password-complexity/featurized
-    - ml-models-service/ml_models/password_complexity/models
+    - ml-models-service/ml_models/password_complexity/xgboost_baseline.pkl
     - src/evaluate.py
     metrics:
-    - metrics/loss.json:
-        cache: false
-    - metrics/scores.json:
+    - metrics.json:
         cache: false
